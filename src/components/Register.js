@@ -1,66 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const Register = ({ onRegister }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const handleRegister = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!username || !password || !confirmPassword) {
-      setError('All fields are required.');
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!"); // Password validation
       return;
     }
+    onRegister(formData); // Pass formData to the onRegister function
+  };
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    onRegister({ username, password });
-    setUsername('');
-    setPassword('');
-    setConfirmPassword('');
-    setError('');
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   return (
     <div className="register-container">
       <h2>Register</h2>
-      <form onSubmit={handleRegister} className="register-form">
-        {error && <p className="error-message">{error}</p>}
-        <div className="form-group">
-          <label>Username</label>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="firstName">First Name</label>
           <input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter username"
+            id="firstName"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
           />
         </div>
-        <div className="form-group">
-          <label>Password</label>
+        <div>
+          <label htmlFor="lastName">Last Name</label>
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
           />
         </div>
-        <div className="form-group">
-          <label>Confirm Password</label>
+        <div>
+          <label htmlFor="confirmPassword">Confirm Password</label>
           <input
             type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Re-enter password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
           />
         </div>
-        <button type="submit" className="register-button">
-          Register
-        </button>
+        <button type="submit">Register</button>
       </form>
     </div>
   );

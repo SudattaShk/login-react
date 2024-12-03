@@ -1,15 +1,21 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-const UserList = ({ users }) => {
+const UserList = () => {
+  // Get users from the Redux store, default to an empty array if undefined
+  const users = useSelector((state) => state.auth.users || []);
+
   return (
-    <div className="userlist-container">
-      <h2>Registered Users</h2>
+    <div>
+      <h2>User List</h2>
       <ul>
-        {users.map((user, index) => (
-          <li key={index}>
-            <strong>Username:</strong> {user.username}
-          </li>
-        ))}
+        {users.length > 0 ? (
+          users.map((user) => (
+            <li key={user.id}>{user.username}</li>
+          ))
+        ) : (
+          <p>No users available</p>
+        )}
       </ul>
     </div>
   );
