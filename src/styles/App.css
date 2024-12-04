@@ -1,39 +1,64 @@
-/* Global styles */
+/* Global Styles */
 body {
   margin: 0;
   padding: 0;
   font-family: "Poppins", sans-serif;
-  background-color: #1e1e2f; /* Dark blue background */
+  background-color: #1e1e2f; /* Dark blue background for fallback */
   color: #ffffff;
 }
 
+/* App Container */
 .app-container {
   display: flex;
   height: 100vh;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
   overflow: hidden;
+  position: relative;
 }
 
-/* Left side (Form container) */
+/* Right Panel (Background Image) */
+.image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url(../assets/background.jpg);  /* Dynamically inserted */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  z-index: -1; /* Ensure background is behind form content */
+}
+
+/* Auth Content */
 .auth-content {
-  flex: 1;
-  padding-left: 8%;
+  position: relative;
+  z-index: 1;
   display: flex;
-  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px; /* Max width for the form */
+  padding: 20px;
+  box-sizing: border-box;
 }
 
+/* Auth Form Container */
 .auth-container {
   width: 100%;
-  max-width: 400px;
   padding: 20px 30px;
   border-radius: 12px;
-  background-color: #25253e;
+  background-color: rgba(255, 255, 255, 0.2); /* Darker background with some transparency */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column; /* Ensure elements are stacked vertically */
+  gap: 20px; /* Space between elements */
 }
 
-/* Header text */
+/* Headers */
 .auth-container h2 {
   font-size: 28px;
   font-weight: bold;
@@ -46,33 +71,44 @@ body {
   color: #b0b0b5;
 }
 
-/* Input fields */
+/* Input Groups */
 .input-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 label {
   display: block;
   margin-bottom: 8px;
-  color: #b0b0b5;
+  color: #000000;
   font-size: 14px;
   font-weight: bold;
 }
 
 input {
+  box-sizing: border-box;
   width: 100%;
   padding: 12px;
-  background-color: #1e1e2f;
+  background-color: rgba(255, 255, 255, 0.2);
   border: 1px solid #3b3b55;
   border-radius: 8px;
-  color: #ffffff;
+  color: #000000;
   font-size: 14px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  margin-bottom: 10px;
 }
 
 input:focus {
   outline: none;
-  border-color: #007acc;
+  border-color: #ffffff;
   box-shadow: 0 0 6px rgba(0, 122, 204, 0.5);
+}
+
+/* Error Messages */
+.error {
+  color: #490929;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
 }
 
 /* Buttons */
@@ -80,37 +116,106 @@ button {
   width: 100%;
   padding: 12px;
   margin-top: 10px;
-  background-color: #007acc;
+  background-color: #10232f;
   color: white;
   font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+button:hover {
+  background-color: #490929;
+  transform: scale(1.02);
+}
+
+/* Toggle Links */
+.toggle-link {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #490929;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.toggle-link:hover {
+  color: #005b99;
+}
+
+/* Success Dialog */
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px 30px;
+  background-color: #25253e;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  color: #ffffff;
+}
+
+.dialog p {
+  margin-bottom: 15px;
+}
+
+.close-dialog-btn {
+  padding: 10px 20px;
+  background-color: #007acc;
+  color: #ffffff;
+  font-size: 14px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+.close-dialog-btn:hover {
   background-color: #005b99;
 }
 
-/* Toggle Links */
-.auth-container a {
-  display: inline-block;
-  margin-top: 15px;
-  font-size: 14px;
-  color: #007acc;
-  text-decoration: underline;
+/* In your CSS file */
+.logout-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  background: #007acc;
+  color: white;
+  border: none;
+  font-size: 16px;
   cursor: pointer;
 }
 
-.auth-container a:hover {
-  color: #005b99;
+/* Add these styles in your CSS file or inline styles if necessary */
+
+/* Welcome User in the top-left corner */
+.welcome-message {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 18px;
+  color: white;
+  font-weight: bold;
 }
 
-/* Right side (Background Image) */
-.image-container {
-  flex: 1;
-  background-image: url("https://via.placeholder.com/600x800"); /* Replace with your image */
-  background-size: cover;
-  background-position: center;
+/* Logout button in the top-right corner */
+.logout-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  background: #007acc;
+  color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: #005b99;
 }

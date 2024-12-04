@@ -17,9 +17,25 @@ const TodoApp = () => {
     dispatch(removeTodo(id));
   };
 
+  const handleLogout = () => {
+    // Logout logic (e.g., clear user data, redirect to login, etc.)
+    console.log("Logging out...");
+  };
+
   return (
     <div className="App">
       <header className="App-header">
+        {/* Welcome Message */}
+        <div className="welcome-message">Welcome User</div>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="logout-button"
+        >
+          Logout
+        </button>
+
         <h2>Todo List</h2>
         <form onSubmit={handleSubmit}>
           <input

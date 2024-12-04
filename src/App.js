@@ -46,9 +46,9 @@ const App = () => {
   return (
     <Router>
       <div className="app-container">
+        {/* Auth Content (Login/Register Forms) */}
         <div className="auth-content">
           <Routes>
-            {/* Login/Register Routes */}
             <Route
               path="/login"
               element={
@@ -77,7 +77,6 @@ const App = () => {
               element={<Register onRegister={handleRegister} />}
             />
 
-            {/* Todo App Route */}
             <Route
               path="/todo"
               element={
@@ -98,7 +97,6 @@ const App = () => {
               }
             />
 
-            {/* Default Route */}
             <Route
               path="/"
               element={<Navigate to={isAuthenticated ? "/todo" : "/login"} />}
@@ -119,13 +117,8 @@ const App = () => {
           )}
         </div>
 
-        {/* Add image on the right */}
-        <div className="image-container">
-          <img
-            src="https://via.placeholder.com/400" // Replace with your desired image URL
-            alt="Illustration"
-          />
-        </div>
+        {/* Right Panel with Background Image */}
+        <div className="image-container"></div>
       </div>
     </Router>
   );
