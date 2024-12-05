@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setUser } from "../features/authSlice";
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ username: "", password: "" });
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -26,7 +29,18 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
 
     if (validateForm()) {
-      onLogin(username, password, navigate);
+      const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+      const foundUser = storedUsers.find(
+        (user) => user.username === username && user.password === password
+      );
+
+      if (foundUser) {
+        localStorage.setItem("currentUser", JSON.stringify(foundUser));
+        dispatch(setUser(foundUser));
+        navigate("/todo");
+      } else {
+        alert("Invalid username or password!");
+      }
     }
   };
 

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import { logout, setUser } from "./features/authSlice";
+import { setUser } from "./features/authSlice";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import TodoApp from "./components/TodoApp";
@@ -9,43 +9,22 @@ import "./styles/App.css";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [isLoginView, setIsLoginView] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
 
-  // Handle Login
-  const handleLogin = (username, password, navigate) => {
-    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-    const foundUser = storedUsers.find(
-      (user) => user.username === username && user.password === password
-    );
-
-    if (foundUser) {
-      dispatch(setUser(foundUser));
-      navigate("/todo");
-    } else {
-      alert("Invalid username or password!");
+  // Load the user from localStorage into Redux when the app loads
+  useEffect(() => {
+    const storedCurrentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (storedCurrentUser) {
+      dispatch(setUser(storedCurrentUser));
     }
-  };
-
-  // Handle Register
-  const handleRegister = (userData) => {
-    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-    const userExists = storedUsers.some((user) => user.username === userData.username);
-
-    if (userExists) {
-      alert("User already exists!");
-    } else {
-      storedUsers.push(userData);
-      localStorage.setItem("users", JSON.stringify(storedUsers));
-      dispatch(setUser(userData));
-      setShowDialog(true);
-    }
-  };
+  }, [dispatch]);
 
   return (
     <Router>
       <div className="app-container">
+    
         {/* Auth Content (Login/Register Forms) */}
         <div className="auth-content">
           <Routes>
@@ -55,9 +34,9 @@ const App = () => {
                 !isAuthenticated ? (
                   <div className="auth-container">
                     {isLoginView ? (
-                      <Login onLogin={handleLogin} />
+                      <Login />
                     ) : (
-                      <Register onRegister={handleRegister} />
+                      <Register />
                     )}
                     <span
                       className="toggle-link"
@@ -72,23 +51,14 @@ const App = () => {
               }
             />
 
-            <Route
-              path="/register"
-              element={<Register onRegister={handleRegister} />}
-            />
+            <Route path="/register" element={<Register />} />
 
             <Route
               path="/todo"
               element={
                 isAuthenticated ? (
                   <div className="welcome-container">
-                    <h1>Welcome, {user?.firstName || "User"}!</h1>
-                    <button
-                      className="logout-btn"
-                      onClick={() => dispatch(logout())}
-                    >
-                      Logout
-                    </button>
+                    
                     <TodoApp />
                   </div>
                 ) : (

@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addTodo, removeTodo } from "../features/todosSlice";
+import { FaSignOutAlt } from "react-icons/fa"; // Import a logout icon from react-icons
+import { logout } from "../features/authSlice";
 
 const TodoApp = () => {
+  const {  user } = useSelector((state) => state.auth);
   const [todoText, setTodoText] = useState("");
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todos);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (todoText.trim() === "") return; // Prevent adding empty todos
     dispatch(addTodo(todoText));
     setTodoText("");
   };
@@ -17,25 +21,18 @@ const TodoApp = () => {
     dispatch(removeTodo(id));
   };
 
-  const handleLogout = () => {
-    // Logout logic (e.g., clear user data, redirect to login, etc.)
-    console.log("Logging out...");
-  };
 
   return (
     <div className="App">
       <header className="App-header">
-        {/* Welcome Message */}
-        <div className="welcome-message">Welcome User</div>
-
-        {/* Logout Button */}
+        {/* Logout Button with Icon positioned to the top right */}
+        <h1>Welcome, {user?.firstName || "User"}!</h1>    
         <button
-          onClick={handleLogout}
-          className="logout-button"
-        >
-          Logout
+          className="logout-icon-btn"
+          onClick={() => dispatch(logout())}
+        >Logout
+          <FaSignOutAlt size={24} /> {/* Logout icon */}
         </button>
-
         <h2>Todo List</h2>
         <form onSubmit={handleSubmit}>
           <input
@@ -47,20 +44,15 @@ const TodoApp = () => {
               width: 350,
               padding: 10,
               borderRadius: 20,
-              border: "none",
-              fontSize: 20,
+              border: "1px solid #ccc",
+              fontSize: 18,
             }}
           />
           <button
             type="submit"
-            style={{
-              padding: 12,
-              borderRadius: 25,
-              fontSize: 15,
-              margin: 20,
-            }}
+            className="styled-button"
           >
-            Add
+            Add To-Do
           </button>
         </form>
         <ul className="allTodos">
@@ -69,13 +61,7 @@ const TodoApp = () => {
               <span className="todoText">{todo.text}</span>
               <button
                 onClick={() => handleRemove(todo.id)}
-                style={{
-                  borderRadius: 25,
-                  padding: 10,
-                  border: "none",
-                  color: "white",
-                  background: "red",
-                }}
+                className="styled-button delete-button"
               >
                 Delete
               </button>

@@ -1,40 +1,37 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "../features/authSlice";
 
-const Register = ({ onRegister }) => {
+const Register = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "", // Changed from username to email
+    email: "",
     password: "",
     confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState({
-    firstName: "",
-    lastName: "",
-    email: "", // Changed from username to email
-    password: "",
-    confirmPassword: "",
-  });
+  const [errors, setErrors] = useState({});
+  const dispatch = useDispatch();
 
   const validateForm = () => {
     let formErrors = {};
 
-    // Validate if fields are not empty
+    // Validate fields
     if (!formData.firstName) formErrors.firstName = "First name is required.";
     if (!formData.lastName) formErrors.lastName = "Last name is required.";
-    if (!formData.email) formErrors.email = "Email is required."; // Check if email is provided
+    if (!formData.email) formErrors.email = "Email is required.";
     if (!formData.password) formErrors.password = "Password is required.";
-    if (!formData.confirmPassword) formErrors.confirmPassword = "Please confirm your password.";
+    if (!formData.confirmPassword) formErrors.confirmPassword = "Confirm password is required.";
 
-    // Password match validation
+    // Check password match
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
       formErrors.confirmPassword = "Passwords do not match!";
     }
 
     // Email format validation
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      formErrors.email = "Please enter a valid email address.";
+      formErrors.email = "Invalid email address.";
     }
 
     return formErrors;
@@ -42,14 +39,28 @@ const Register = ({ onRegister }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Perform validation
     const formErrors = validateForm();
     setErrors(formErrors);
 
-    // If no errors, proceed to register
     if (Object.keys(formErrors).length === 0) {
-      onRegister(formData); // Pass formData to the onRegister function
+      // If no errors, proceed with registration
+      const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+      const userExists = storedUsers.some((user) => user.email === formData.email);
+
+      if (userExists) {
+        alert("User already exists!");
+      } else {
+        // Save user to localStorage
+        storedUsers.push(formData);
+        localStorage.setItem("users", JSON.stringify(storedUsers));
+        localStorage.setItem("currentUser", JSON.stringify(formData));
+
+        // Update the Redux store
+        dispatch(setUser(formData));
+        alert("User registered successfully!");
+      }
     }
   };
 
@@ -62,7 +73,7 @@ const Register = ({ onRegister }) => {
     <div className="register-container">
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="input-group">
           <label htmlFor="firstName">First Name</label>
           <input
             type="text"
@@ -73,7 +84,8 @@ const Register = ({ onRegister }) => {
           />
           {errors.firstName && <span className="error">{errors.firstName}</span>}
         </div>
-        <div>
+
+        <div className="input-group">
           <label htmlFor="lastName">Last Name</label>
           <input
             type="text"
@@ -84,18 +96,20 @@ const Register = ({ onRegister }) => {
           />
           {errors.lastName && <span className="error">{errors.lastName}</span>}
         </div>
-        <div>
-          <label htmlFor="email">Email</label> 
+
+        <div className="input-group">
+          <label htmlFor="email">Email</label>
           <input
-            type="email" // Updated to type="email"
-            id="email" // Changed from username to email
-            name="email" // Changed from username to email
+            type="email"
+            id="email"
+            name="email"
             value={formData.email}
             onChange={handleChange}
           />
-          {errors.email && <span className="error">{errors.email}</span>} {/* Show email error if any */}
+          {errors.email && <span className="error">{errors.email}</span>}
         </div>
-        <div>
+
+        <div className="input-group">
           <label htmlFor="password">Password</label>
           <input
             type="password"
@@ -106,7 +120,8 @@ const Register = ({ onRegister }) => {
           />
           {errors.password && <span className="error">{errors.password}</span>}
         </div>
-        <div>
+
+        <div className="input-group">
           <label htmlFor="confirmPassword">Confirm Password</label>
           <input
             type="password"
@@ -117,6 +132,7 @@ const Register = ({ onRegister }) => {
           />
           {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
         </div>
+
         <button type="submit">Register</button>
       </form>
     </div>

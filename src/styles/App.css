@@ -40,9 +40,9 @@ body {
   align-items: center;
   flex-direction: column;
   width: 100%;
-  max-width: 500px; /* Max width for the form */
   padding: 20px;
-  box-sizing: border-box;
+  height: 100%;
+
 }
 
 /* Auth Form Container */
@@ -56,6 +56,8 @@ body {
   display: flex;
   flex-direction: column; /* Ensure elements are stacked vertically */
   gap: 20px; /* Space between elements */
+  max-width: 450px; 
+  box-sizing: border-box;
 }
 
 /* Headers */
@@ -176,46 +178,68 @@ button:hover {
   background-color: #005b99;
 }
 
-/* In your CSS file */
-.logout-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  border-radius: 25px;
-  background: #007acc;
-  color: white;
+/* General button styling for consistency */
+.styled-button {
+  background-color: #007bff; /* Match the primary website theme */
+  color: #fff;
   border: none;
+  border-radius: 25px;
+  padding: 10px;
   font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Add these styles in your CSS file or inline styles if necessary */
+.styled-button:hover {
+  background-color: #0056b3; /* Darker shade for hover */
+}
 
-/* Welcome User in the top-left corner */
-.welcome-message {
+.styled-button:active {
+  background-color: #003f7f; /* Even darker shade for active state */
+}
+
+.delete-button {
+  background-color: red;
+  font-size: 14px;
+}
+
+.delete-button:hover {
+  background-color: darkred;
+}
+
+.logout-icon-btn{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
   position: absolute;
-  top: 20px;
+  width: 150px;
+  top: 30px;
+  right: 20px;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #490929;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+
+.App-header.h1{
+  position: absolute;
+  top: 10px;
   left: 20px;
   font-size: 18px;
   color: white;
   font-weight: bold;
 }
 
-/* Logout button in the top-right corner */
-.logout-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  border-radius: 25px;
-  background: #007acc;
-  color: white;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.logout-button:hover {
-  background: #005b99;
-}
+.singleTodo{
+  font-size: 18px;
+  margin-top: 15px;
+} 
