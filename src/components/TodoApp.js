@@ -9,6 +9,7 @@ const TodoApp = () => {
   const { user } = useSelector((state) => state.auth); // Current logged-in user
   const todos = useSelector((state) => state.todos[user.email] || []); // Get todos for the current user
   const [todoText, setTodoText] = useState("");
+  const [errors, setErrors] = useState(""); // Error message state
 
   // Load todos for the current user from localStorage on component mount
   useEffect(() => {
@@ -25,11 +26,26 @@ const TodoApp = () => {
     localStorage.setItem("todos", JSON.stringify(storedTodos));
   }, [todos, user.email]);
 
+  // Validate the todo input
+  const validateTodo = (text) => {
+    if (text.trim() === "") {
+      setErrors("Todo cannot be empty.");
+      return false;
+    }
+    if (todos.some((todo) => todo.text.toLowerCase() === text.trim().toLowerCase())) {
+      setErrors("This todo already exists.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (todoText.trim() === "") return; // Prevent adding empty todos
-    dispatch(addTodo({ email: user.email, text: todoText }));
-    setTodoText("");
+    setErrors(""); // Clear previous errors
+    if (validateTodo(todoText)) {
+      dispatch(addTodo({ email: user.email, text: todoText.trim() }));
+      setTodoText(""); // Clear input field
+    }
   };
 
   const handleRemove = (id) => {
@@ -67,8 +83,21 @@ const TodoApp = () => {
           <button type="submit" className="styled-button">
             Add To-Do
           </button>
+          {/* Inline error message */}
+          {errors && <p style={{ color: "red", marginTop: "5px" }}>{errors}</p>}
         </form>
-        <ul className="allTodos">
+        {/* Scrollable Todo List */}
+        <ul
+          className="allTodos"
+          style={{
+            maxHeight: "300px", // Limit the height
+            overflowY: "scroll", // Add vertical scrollbar
+            padding: "10px",
+            border: "1px solid #ccc",
+            borderRadius: "10px",
+            width: "100%",
+          }}
+        >
           {todos.map((todo) => (
             <li key={todo.id} className="singleTodo">
               <span className="todoText">{todo.text}</span>
