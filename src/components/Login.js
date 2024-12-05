@@ -1,20 +1,21 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "../features/authSlice";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({ username: "", password: "" });
+  const [errors, setErrors] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const users = useSelector((state) => state.auth.users); // Get all users from Redux
 
   const validateForm = () => {
-    const newErrors = { username: "", password: "" };
+    const newErrors = { email: "", password: "" };
 
-    if (!username.trim()) {
-      newErrors.username = "Username is required.";
+    if (!email.trim()) {
+      newErrors.email = "Email is required.";
     }
 
     if (!password.trim()) {
@@ -22,16 +23,15 @@ const Login = () => {
     }
 
     setErrors(newErrors);
-    return !newErrors.username && !newErrors.password; // Return true if no errors
+    return !newErrors.email && !newErrors.password;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validateForm()) {
-      const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-      const foundUser = storedUsers.find(
-        (user) => user.username === username && user.password === password
+      const foundUser = users.find(
+        (user) => user.email === email && user.password === password
       );
 
       if (foundUser) {
@@ -39,7 +39,7 @@ const Login = () => {
         dispatch(setUser(foundUser));
         navigate("/todo");
       } else {
-        alert("Invalid username or password!");
+        alert("Invalid email or password!");
       }
     }
   };
@@ -49,14 +49,14 @@ const Login = () => {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="input-group">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="email">Email</label>
           <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          {errors.username && <span className="error">{errors.username}</span>}
+          {errors.email && <span className="error">{errors.email}</span>}
         </div>
         <div className="input-group">
           <label htmlFor="password">Password</label>

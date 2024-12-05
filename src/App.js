@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import { setUser } from "./features/authSlice";
+import { setUser, setUsers } from "./features/authSlice"; // Import setUsers action
 import Login from "./components/Login";
 import Register from "./components/Register";
 import TodoApp from "./components/TodoApp";
@@ -11,11 +11,13 @@ const App = () => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [isLoginView, setIsLoginView] = useState(true);
-  const [showDialog, setShowDialog] = useState(false);
 
-  // Load the user from localStorage into Redux when the app loads
+  // Load users and the current user from localStorage into Redux on app load
   useEffect(() => {
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
     const storedCurrentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+    dispatch(setUsers(storedUsers)); // Load all users into Redux
     if (storedCurrentUser) {
       dispatch(setUser(storedCurrentUser));
     }
@@ -24,8 +26,6 @@ const App = () => {
   return (
     <Router>
       <div className="app-container">
-    
-        {/* Auth Content (Login/Register Forms) */}
         <div className="auth-content">
           <Routes>
             <Route
@@ -50,44 +50,17 @@ const App = () => {
                 )
               }
             />
-
             <Route path="/register" element={<Register />} />
-
             <Route
               path="/todo"
               element={
-                isAuthenticated ? (
-                  <div className="welcome-container">
-                    
-                    <TodoApp />
-                  </div>
-                ) : (
-                  <Navigate to="/login" />
-                )
+                isAuthenticated ? <TodoApp /> : <Navigate to="/login" />
               }
             />
-
-            <Route
-              path="/"
-              element={<Navigate to={isAuthenticated ? "/todo" : "/login"} />}
-            />
+            {/* Redirect unknown routes to login */}
+            <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
-
-          {/* Registration Success Dialog */}
-          {showDialog && (
-            <div className="dialog">
-              <p>User registered successfully!</p>
-              <button
-                className="close-dialog-btn"
-                onClick={() => setShowDialog(false)}
-              >
-                Close
-              </button>
-            </div>
-          )}
         </div>
-
-        {/* Right Panel with Background Image */}
         <div className="image-container"></div>
       </div>
     </Router>
