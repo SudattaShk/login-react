@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import { setUser, setUsers } from "./features/authSlice"; // Import setUsers action
+import { setUser, setUsers } from "./features/authSlice";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import TodoApp from "./components/TodoApp";
@@ -28,6 +28,11 @@ const App = () => {
       <div className="app-container">
         <div className="auth-content">
           <Routes>
+            {/* Redirect root URL to login */}
+            <Route
+              path="/"
+              element={<Navigate to="/login" />}
+            />
             <Route
               path="/login"
               element={

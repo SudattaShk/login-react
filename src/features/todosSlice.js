@@ -2,23 +2,28 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const todosSlice = createSlice({
   name: "todos",
-  initialState: [],
+  initialState: {}, // State is an object with user emails as keys
   reducers: {
     addTodo: (state, action) => {
-      const todoText = action.payload.trim();
-      if (todoText && !state.some((todo) => todo.text === todoText)) {
-        state.push({ id: Date.now(), text: todoText });
+      const { email, text } = action.payload;
+      if (!state[email]) state[email] = [];
+      const todoText = text.trim();
+      if (todoText && !state[email].some((todo) => todo.text === todoText)) {
+        state[email].push({ id: Date.now(), text: todoText });
       }
     },
     removeTodo: (state, action) => {
-      return state.filter((todo) => todo.id !== action.payload);
+      const { email, id } = action.payload;
+      if (state[email]) {
+        state[email] = state[email].filter((todo) => todo.id !== id);
+      }
     },
-    toggleTodo: (state, action) => {
-      const todo = state.find((todo) => todo.id === action.payload);
-      if (todo) todo.completed = !todo.completed;
+    loadTodos: (state, action) => {
+      const { email, todos } = action.payload;
+      state[email] = todos || [];
     },
   },
 });
 
-export const { addTodo, removeTodo, toggleTodo } = todosSlice.actions; // Export removeTodo
+export const { addTodo, removeTodo, loadTodos } = todosSlice.actions;
 export default todosSlice.reducer;

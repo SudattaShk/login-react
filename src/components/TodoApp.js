@@ -1,38 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addTodo, removeTodo } from "../features/todosSlice";
-import { FaSignOutAlt } from "react-icons/fa"; // Import a logout icon from react-icons
+import { addTodo, removeTodo, loadTodos } from "../features/todosSlice";
+import { FaSignOutAlt } from "react-icons/fa";
 import { logout } from "../features/authSlice";
 
 const TodoApp = () => {
-  const {  user } = useSelector((state) => state.auth);
-  const [todoText, setTodoText] = useState("");
   const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todos);
+  const { user } = useSelector((state) => state.auth); // Current logged-in user
+  const todos = useSelector((state) => state.todos[user.email] || []); // Get todos for the current user
+  const [todoText, setTodoText] = useState("");
+
+  // Load todos for the current user from localStorage on component mount
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem("todos")) || {};
+    if (user.email) {
+      dispatch(loadTodos({ email: user.email, todos: storedTodos[user.email] }));
+    }
+  }, [user.email, dispatch]);
+
+  // Save todos to localStorage whenever they change
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem("todos")) || {};
+    storedTodos[user.email] = todos;
+    localStorage.setItem("todos", JSON.stringify(storedTodos));
+  }, [todos, user.email]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (todoText.trim() === "") return; // Prevent adding empty todos
-    dispatch(addTodo(todoText));
+    dispatch(addTodo({ email: user.email, text: todoText }));
     setTodoText("");
   };
 
   const handleRemove = (id) => {
-    dispatch(removeTodo(id));
+    dispatch(removeTodo({ email: user.email, id }));
   };
-
 
   return (
     <div className="App">
       <header className="App-header">
-        {/* Logout Button with Icon positioned to the top right */}
-        <h1>Welcome, {user?.firstName || "User"}!</h1>    
-        <button
-          className="logout-icon-btn"
-          onClick={() => dispatch(logout())}
-        >Logout
-          <FaSignOutAlt size={24} /> {/* Logout icon */}
-        </button>
+        {/* Logout Button */}
+        <div className="logout-container">
+          <h1>Welcome, {user.firstName || "User"}!</h1>
+          <button
+            className="logout-icon-btn"
+            onClick={() => dispatch(logout())}
+          >
+            Logout <FaSignOutAlt size={24} />
+          </button>
+        </div>
         <h2>Todo List</h2>
         <form onSubmit={handleSubmit}>
           <input
@@ -48,10 +64,7 @@ const TodoApp = () => {
               fontSize: 18,
             }}
           />
-          <button
-            type="submit"
-            className="styled-button"
-          >
+          <button type="submit" className="styled-button">
             Add To-Do
           </button>
         </form>
